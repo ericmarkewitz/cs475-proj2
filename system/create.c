@@ -13,7 +13,7 @@ local	int newpid();
  * @param name		name for debugging
  * @param nargs		number of args that follow
  */
-pid32	create(void *procaddr, uint32 ssize, char *name, uint32 nargs, ...)
+pid32	create(void *procaddr, uint32 ssize, pri16 prprio, char *name, uint32 nargs, ...)
 {
 	uint32		savsp, *pushsp;
 	intmask 	mask;    	// interrupt mask
@@ -47,6 +47,11 @@ pid32	create(void *procaddr, uint32 ssize, char *name, uint32 nargs, ...)
 	prptr->prsem = -1;
 	prptr->prparent = (pid32)getpid();
 	prptr->prhasmsg = FALSE;
+
+
+	//Added the processes priority
+	prptr->prprio = prprio;
+
 
 	// set up initial device descriptors for the shell
 	prptr->prdesc[0] = CONSOLE;	// stdin  is CONSOLE device
