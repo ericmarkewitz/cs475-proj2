@@ -16,7 +16,7 @@ void	printqueue(struct queue *q)
 		struct qentry *curr = q->head;
 		while (curr != NULL)
 		{
-			kprintf("(pid=%u)", curr->pid);
+			kprintf("(pid=%u, key=%u)", curr->pid, curr->key);
 			curr = curr->next;
 		}
 	}
@@ -59,9 +59,10 @@ bool8	isfull(struct queue *q)
 
 
 /**
- * Insert a process at the tail of a queue
+ * Insert a qentry at its correct place in the queue based on the key
  * @param pid	ID process to insert
  * @param q	Pointer to the queue to use
+ * @param key key to determine its palce in the queue
  *
  * @return pid on success, SYSERR otherwise
  */
@@ -80,6 +81,7 @@ pid32 enqueue(pid32 pid, struct queue *q, int32 key)
 	//newEntry->prev = q->tail;
 	//newEntry->next = NULL;
 
+	//If there is only one element in the queue it's both the head and the tail
 	if(q->size == 0){
 		newEntry->prev = NULL;
 		newEntry->next = NULL;
@@ -91,6 +93,7 @@ pid32 enqueue(pid32 pid, struct queue *q, int32 key)
 		return pid;
 	}
 	else{
+		//If theres more than one element in the tail loop through and see where it fits
 		struct qentry *currEntry = q->head;
 		while(currEntry != NULL){
 			if(newEntry->key > currEntry->key){
@@ -99,51 +102,30 @@ pid32 enqueue(pid32 pid, struct queue *q, int32 key)
 
 				currEntry->prev = newEntry;
 
-				if(currEntry = q->head){
+				if(currEntry == q->head){
 					q->head = newEntry;
 				}
-				
+				q->size++;
 				return pid;
 			}
 			else{
-				if(q->tail->pid == currEntry->pid){
-					newEntry->prev = currEntry;
-					newEntry->next = NULL;
-
-					currEntry->next = newEntry;
-
-					q->tail = newEntry;
-					return pid;
-				}
-				else{
-					currEntry = currEntry->next;
-				}
+				currEntry = currEntry->next;
 			}
 		}
-		
-		
+		//If the new entry is smaller than the tail, make it the new tail
+		currEntry = q->tail;
+		newEntry->prev = currEntry;
+		newEntry->next = NULL;
+
+		currEntry->next = newEntry;
+
+		q->tail = newEntry;
+		q->size++;
+		return pid;
 		
 	}
-
-	//TODO - insert into tail of queue
-
-	//link the new entry to the last queue entry
-	struct qentry *tailEntry = q->tail;
-	if (tailEntry != NULL)
-		tailEntry->next = newEntry;
-
-	//update Queue tail to point to  new entry
-	q->tail = newEntry;
-
-	//update Queue head if needed
-	if (q->head == NULL)
-		q->head = newEntry;
-
-	//update queue size
-	q->size++;
-
-	return pid;
 }
+
 
 /**
  * Remove and return the first process on a list
