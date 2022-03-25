@@ -20,7 +20,7 @@ void	printqueue(struct queue *q)
 			curr = curr->next;
 		}
 	}
-	kprintf("]\n");
+	kprintf("] size: %d\n", q->size);
 }
 
 /**
@@ -104,6 +104,11 @@ pid32 enqueue(pid32 pid, struct queue *q, int32 key)
 
 				if(currEntry == q->head){
 					q->head = newEntry;
+				}
+				else{
+					struct qentry *beforeCurr = currEntry->prev->prev;
+					//kprintf("Before curr pid, key: %u, %d", beforeCurr->pid, beforeCurr->key);
+					beforeCurr->next = newEntry;
 				}
 				q->size++;
 				return pid;

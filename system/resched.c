@@ -31,6 +31,7 @@ void	resched(void)		// assumes interrupts are disabled
 
         // Force context switch to next ready process
         currpid = dequeue(readyqueue);
+		//kprintf("Currpid: %u", currpid);
         ptnew = &proctab[currpid];
         ptnew->prstate = PR_CURR;
 // DC REMOVE END 

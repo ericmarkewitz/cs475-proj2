@@ -1,6 +1,9 @@
 /* in file addargs.c */
 extern	status	addargs(pid32, int32, int32[], int32,char *, void *);
 
+/* in file ready.c */
+extern void aging(struct queue *readyqueue);
+
 /* in file ascdate.c */
 extern	status	ascdate(uint32, char *);
 
