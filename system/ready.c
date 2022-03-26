@@ -39,7 +39,6 @@ status	ready(pid32 pid, bool8 resch)
 
 	if(AGING && readyqueue->size > 3){
 		aging(readyqueue);
-		kprintf("\nAGED!\n");
 	}
 	printqueue(readyqueue);
 	
@@ -61,10 +60,10 @@ status	ready(pid32 pid, bool8 resch)
  */
 void aging(struct queue *q){
 	int randVal = rand() % 3;
-	kprintf("Random Value: %d\n", randVal);
+	//kprintf("Random Value: %d\n", randVal);
 
 	if(randVal == 0){
-		kprintf("Inside loop\n");
+		kprintf("SWAPPING\n");
 		struct qentry *oldHead = q->head; //Pointer to the head
 		struct qentry *beforeTail = q->tail->prev;
 

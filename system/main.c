@@ -25,6 +25,17 @@ void	printpid(int32 argc, int32 *argv)
 	}
 }
 
+
+void hogger(int32 argc, int32 *argv){
+	kprintf("This is a process that has high priority and is hogging up the queue - pid: %d\n", currpid);
+	//kprintf("\n");
+}
+
+void lowprio(int32 argc, int32 *argv){
+	kprintf("This is a process that has LOW PRIORITY and wants a chance to run - pid: %d\n", currpid);
+	//kprintf("\n");
+}
+
 int	main(uint32 argc, uint32 *argv)
 {
 	static uint32 args[] = {1, 2, 3};
@@ -34,11 +45,23 @@ int	main(uint32 argc, uint32 *argv)
 	kprintf("Hello XINU WORLD!\r\n");
 
 	//priority of process is input as the 3rd argument of create()
+	/*
 	ready(create((void*) printpid, INITSTK, 1, "PRINTER-1", 2, 1, args1++), FALSE);
 	ready(create((void*) printpid, INITSTK, 5, "PRINTER-B", 2, 1, args1++), FALSE);
 	ready(create((void*) printpid, INITSTK, 10, "PRINTER-C", 2, 1, args1++), FALSE);
 	ready(create((void*) printpid, INITSTK, 5, "PRINTER-D", 2, 1, args1++), FALSE);
 	ready(create((void*) bigargs, INITSTK, 5, "BIGARGS", 2, 6, args2), FALSE);
+	*/
+	ready(create((void*) lowprio, INITSTK, 4, "STARVING-PROCESS", 2, 1, args1++), FALSE);
+
+	for(int i=0; i<10; i++){
+		ready(create((void*) hogger, INITSTK, (60-i), "HOGGING-PROCESS", 2, 1, args1++), FALSE);
+	}
+	ready(create((void*) lowprio, INITSTK, 1, "STARVING-PROCESS", 2, 1, args1++), FALSE);
+
+	for(int i=0; i<10; i++){
+		ready(create((void*) hogger, INITSTK, (60-i), "HOGGING-PROCESS", 2, 1, args1++), FALSE);
+	}
 
 	return 0;
 }
